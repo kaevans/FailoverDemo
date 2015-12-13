@@ -1,26 +1,23 @@
 ﻿using FailoverDemo.Infrastructure;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FailoverDemo
 {
-    public class PhotoContextConfiguration : DbConfiguration
+    public class AdventureWorksContextConfiguration : DbConfiguration
     {
-        public PhotoContextConfiguration() : base()
+        public AdventureWorksContextConfiguration() : base()
         {
+            CUIFailoverProvider provider = new CUIFailoverProvider();
             //Set the failover execution strategy to handle 
             //transient faults and to tell us when we 
             //need to failover
             this.SetExecutionStrategy("System.Data.SqlClient", () =>
-                new SqlAzureFailoverStrategy(3, new TimeSpan(0, 0, 5), new CUIFailoverProvider()));
+                new SqlAzureFailoverStrategy(3, new TimeSpan(0, 0, 10), provider));
             
             //Add the connection interceptor so we can change
             //the connection string when failover occurs
-            this.AddInterceptor(new ConnectionInterceptor());
+            this.AddInterceptor(new ConnectionInterceptor(provider));
 
         }
     }

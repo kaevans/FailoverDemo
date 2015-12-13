@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 
 namespace FailoverDemo.Infrastructure
 {
@@ -6,6 +7,7 @@ namespace FailoverDemo.Infrastructure
     {
         private static bool _shouldFail = false;
         private static int _current = 0;
+        private static bool? _isReadOnly = false;
 
         public string GetConnectionString()
         {
@@ -29,6 +31,10 @@ namespace FailoverDemo.Infrastructure
                 //Reset the failover flag, assume the new
                 //connection string will succeed
                 _shouldFail = false;
+
+                //We won't know if the database is read only
+                //until a connection is opened against it.
+                _isReadOnly = null;
             }
 
             return ConfigurationManager.ConnectionStrings[_current].ConnectionString;
@@ -45,6 +51,18 @@ namespace FailoverDemo.Infrastructure
             set
             {
                 _shouldFail = value;
+            }
+        }
+
+        public bool? IsReadOnly
+        {
+            get
+            {
+                return _isReadOnly;
+            }
+            set
+            {
+                _isReadOnly = value;
             }
         }
     }

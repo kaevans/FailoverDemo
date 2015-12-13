@@ -1,20 +1,37 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
 using System.Data.Entity.Infrastructure.Interception;
+using System.Threading.Tasks;
 
 namespace FailoverDemo.Infrastructure
 {
     internal class ConnectionInterceptor : IDbConnectionInterceptor
     {
-        public void Opening(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
+        private IFailoverProvider _provider;
+        public ConnectionInterceptor(IFailoverProvider provider)
         {
-            //This is where we figure out which connection string to load
-            CUIFailoverProvider provider = new CUIFailoverProvider();
-            connection.ConnectionString = provider.GetConnectionString();
+            _provider = provider;
         }
 
+        public void Opening(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
+        {
+            //This is where we figure out which connection string to load            
+            connection.ConnectionString = _provider.GetConnectionString();
+        }
 
+        public void Opened(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
+        {
+            //If the provider has a null value for IsReadOnly,
+            //  then it is the first time we are determining.
+            //  Once a connection is established, we don't 
+            //  make additional checks.  The only way to 
+            //  refresh this is to fail over.  
+            if(!_provider.IsReadOnly.HasValue && connection.State != ConnectionState.Closed)
+            {
+                _provider.IsReadOnly = connection.IsReadOnly();
+            }
+            
+        }
 
         #region NotImplemented
         public void BeganTransaction(DbConnection connection, BeginTransactionInterceptionContext interceptionContext)
@@ -106,13 +123,6 @@ namespace FailoverDemo.Infrastructure
         {
 
         }
-
-        public void Opened(DbConnection connection, DbConnectionInterceptionContext interceptionContext)
-        {
-
-        }
-
-
 
         public void ServerVersionGetting(DbConnection connection, DbConnectionInterceptionContext<string> interceptionContext)
         {

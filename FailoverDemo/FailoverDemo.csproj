@@ -80,15 +80,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdventureWorksContext.cs" />
+    <Compile Include="Customer.cs" />
     <Compile Include="Infrastructure\ConnectionInterceptor.cs" />
     <Compile Include="Infrastructure\CUIFailoverProvider.cs" />
-    <Compile Include="PhotoContextConsoleLoggingInitializer.cs" />
+    <Compile Include="Infrastructure\DbConnectionExtension.cs" />
+    <Compile Include="AdventureWorksContextConsoleLoggingInitializer.cs" />
     <Compile Include="Infrastructure\IFailoverProvider.cs" />
     <Compile Include="Infrastructure\SqlAzureFailoverStrategy.cs" />
-    <Compile Include="Infrastructure\WebFailoverProvider.cs" />
-    <Compile Include="Photo.cs" />
-    <Compile Include="PhotoContext.cs" />
-    <Compile Include="PhotoContextConfiguration.cs" />
+    <Compile Include="AdventureWorksContextConfiguration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

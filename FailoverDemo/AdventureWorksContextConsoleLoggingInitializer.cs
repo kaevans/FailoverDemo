@@ -12,9 +12,9 @@ namespace FailoverDemo
     /// SqlException indicating there is already a table
     /// 'Photos' in the database.
     /// </summary>
-    public class PhotoContextConsoleLoggingInitializer : IDatabaseInitializer<PhotoContext>        
+    public class AdventureWorksContextConsoleLoggingInitializer : IDatabaseInitializer<AdventureWorksContext>        
     {
-        public void InitializeDatabase(PhotoContext context)
+        public void InitializeDatabase(AdventureWorksContext context)
         {
             context.Database.Log = Console.Write;
         }
